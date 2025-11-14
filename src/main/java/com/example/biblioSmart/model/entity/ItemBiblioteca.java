@@ -47,11 +47,11 @@ public class ItemBiblioteca {
     @Column(nullable = false)
     private EstadoItem estado = EstadoItem.DISPONIBLE;
 
-    @Column(name = "ejemplares_totales")
-    private Integer ejemplaresTotales = 1;
+    @Column(name = "copias_totales")
+    private Integer copiasTotales = 1;
 
-    @Column(name = "ejemplares_disponibles")
-    private Integer ejemplaresDisponibles = 1;
+    @Column(name = "copias_disponibles")
+    private Integer copiasDisponibles = 1;
 
     private String ubicacion;
     
@@ -72,11 +72,11 @@ public class ItemBiblioteca {
     // Constructores
     public ItemBiblioteca() {}
     
-    public ItemBiblioteca(String titulo, TipoItem tipo, Integer ejemplaresTotales) {
+    public ItemBiblioteca(String titulo, TipoItem tipo, Integer copiasTotales) {
         this.titulo = titulo;
         this.tipo = tipo;
-        this.ejemplaresTotales = ejemplaresTotales;
-        this.ejemplaresDisponibles = ejemplaresTotales;
+        this.copiasTotales = copiasTotales;
+        this.copiasDisponibles = copiasTotales;
     }
     
     // Getters y Setters
@@ -98,14 +98,14 @@ public class ItemBiblioteca {
     public EstadoItem getEstado() { return estado; }
     public void setEstado(EstadoItem estado) { this.estado = estado; }
     
-    public Integer getEjemplaresTotales() { return ejemplaresTotales; }
-    public void setEjemplaresTotales(Integer ejemplaresTotales) {
-        this.ejemplaresTotales = ejemplaresTotales;
-        this.ejemplaresDisponibles = ejemplaresTotales; // Reset al cambiar total
+    public Integer getCopiasTotales() { return copiasTotales; }
+    public void setCopiasTotales(Integer copiasTotales) {
+        this.copiasTotales = copiasTotales;
+        this.copiasDisponibles = copiasTotales; // Reset al cambiar total
     }
 
-    public Integer getEjemplaresDisponibles() { return ejemplaresDisponibles; }
-    public void setEjemplaresDisponibles(Integer ejemplaresDisponibles) { this.ejemplaresDisponibles = ejemplaresDisponibles; }
+    public Integer getCopiasDisponibles() { return copiasDisponibles; }
+    public void setCopiasDisponibles(Integer copiasDisponibles) { this.copiasDisponibles = copiasDisponibles; }
 
     public String getEditorial() { return editorial; }
     public void setEditorial(String editorial) { this.editorial = editorial; }

@@ -23,11 +23,11 @@ public interface ItemRepository extends JpaRepository<ItemBiblioteca, Long> {
     
     List<ItemBiblioteca> findByEstado(EstadoItem estado);
     
-    List<ItemBiblioteca> findByEjemplaresDisponiblesGreaterThan(Integer cantidad);
+    List<ItemBiblioteca> findByCopiasDisponiblesGreaterThan(Integer cantidad);
 
     Optional<ItemBiblioteca> findByIsbn(String isbn);
 
-    @Query("SELECT i FROM ItemBiblioteca i WHERE i.ejemplaresDisponibles > 0 AND i.estado = 'DISPONIBLE'")
+    @Query("SELECT i FROM ItemBiblioteca i WHERE i.copiasDisponibles > 0 AND i.estado = 'DISPONIBLE'")
     List<ItemBiblioteca> findItemsDisponibles();
     
     @Query("SELECT i FROM ItemBiblioteca i WHERE i.titulo LIKE %:termino% OR i.autor LIKE %:termino% OR i.descripcion LIKE %:termino%")
