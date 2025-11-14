@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   postgres:
     image: postgres:15
@@ -6,7 +5,7 @@ services:
     environment:
       POSTGRES_DB: bibliodb
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: bibliosmart
     ports:
       - "5432:5432"
     volumes:
