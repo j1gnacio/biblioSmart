@@ -5,10 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.biblioSmart.model.entity.ItemBiblioteca;
 import com.example.biblioSmart.model.enums.EstadoItem;
@@ -17,10 +19,16 @@ import com.example.biblioSmart.repository.ItemRepository;
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
+@Transactional
 public class ItemBibliotecaTest {
 
     @Autowired
     private ItemRepository itemRepository;
+
+    @BeforeEach
+    void setUp() {
+        itemRepository.deleteAll();  // Limpia la base de datos antes de cada prueba
+    }
 
     @Test
     void testConexionBaseDatos() {
@@ -39,7 +47,7 @@ public class ItemBibliotecaTest {
         item.setAñoPublicacion(1605);
         item.setTipo(TipoItem.LIBRO);
         item.setEstado(EstadoItem.DISPONIBLE);
-        item.setEjemplaresTotales(5);
+        item.setCopiasTotales(5);
         item.setUbicacion("Estantería A1");
         item.setDescripcion("Clásico de la literatura española");
 
@@ -51,10 +59,8 @@ public class ItemBibliotecaTest {
         assertEquals("El Quijote", itemGuardado.getTitulo());
         assertEquals(TipoItem.LIBRO, itemGuardado.getTipo());
         assertEquals(EstadoItem.DISPONIBLE, itemGuardado.getEstado());
-        assertEquals(5, itemGuardado.getEjemplaresTotales());
-        assertEquals(5, itemGuardado.getEjemplaresDisponibles()); // Debe coincidir inicialmente
-
-        System.out.println("✅ ITEM BIBLIOTECA CREADO EXITOSAMENTE - ID: " + itemGuardado.getId());
+        assertEquals(5, itemGuardado.getCopiasTotales());
+        assertEquals(5, itemGuardado.getCopiasDisponibles()); // Debe coincidir inicialmente
     }
 
     @Test
@@ -85,11 +91,11 @@ public class ItemBibliotecaTest {
 
         assertNotNull(dvdGuardado.getId());
         assertEquals(TipoItem.DVD, dvdGuardado.getTipo());
-        assertEquals(2, dvdGuardado.getEjemplaresTotales());
+        assertEquals(2, dvdGuardado.getCopiasTotales());
 
         assertNotNull(revistaGuardada.getId());
         assertEquals(TipoItem.REVISTA, revistaGuardada.getTipo());
-        assertEquals(10, revistaGuardada.getEjemplaresTotales());
+        assertEquals(10, revistaGuardada.getCopiasTotales());
     }
 
     @Test
@@ -115,11 +121,11 @@ public class ItemBibliotecaTest {
         ItemBiblioteca guardado = itemRepository.save(item);
 
         // Simular préstamo: reducir disponibles
-        guardado.setEjemplaresDisponibles(3);
+        guardado.setCopiasDisponibles(3);
         ItemBiblioteca actualizado = itemRepository.save(guardado);
 
-        assertEquals(5, actualizado.getEjemplaresTotales());
-        assertEquals(3, actualizado.getEjemplaresDisponibles());
+        assertEquals(5, actualizado.getCopiasTotales());
+        assertEquals(3, actualizado.getCopiasDisponibles());
     }
 
     @Test
@@ -138,14 +144,14 @@ public class ItemBibliotecaTest {
     void testBuscarPorEjemplaresDisponibles() {
         // Crear items con diferentes ejemplares disponibles
         ItemBiblioteca item1 = new ItemBiblioteca("Item 1", TipoItem.LIBRO, 5);
-        item1.setEjemplaresDisponibles(3);
+        item1.setCopiasDisponibles(3);
         ItemBiblioteca item2 = new ItemBiblioteca("Item 2", TipoItem.DVD, 2);
-        item2.setEjemplaresDisponibles(0);
+        item2.setCopiasDisponibles(0);
         itemRepository.save(item1);
         itemRepository.save(item2);
 
         // Buscar items con más de 1 ejemplar disponible
-        java.util.List<ItemBiblioteca> encontrados = itemRepository.findByEjemplaresDisponiblesGreaterThan(1);
+        java.util.List<ItemBiblioteca> encontrados = itemRepository.findByCopiasDisponiblesGreaterThan(1);
         assertFalse(encontrados.isEmpty());
         assertTrue(encontrados.stream().anyMatch(i -> i.getTitulo().equals("Item 1")));
         assertFalse(encontrados.stream().anyMatch(i -> i.getTitulo().equals("Item 2")));
