@@ -32,6 +32,6 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
     @Query("SELECT r FROM Reserva r WHERE r.item.id = :itemId AND r.estado = 'PENDIENTE' AND r.posicionCola = 1")
     List<Reserva> findProximaReservaEnCola(@Param("itemId") Long itemId);
     
-    // Método adicional para validaciones
-    List<Reserva> findByUsuarioIdAndItemId(Long usuarioId, Long itemId);
+    // Método para validaciones - BUSCAR POR USUARIO E ITEM
+    List<Reserva> findByUsuarioIdAndItemId(@Param("usuarioId") Long usuarioId, @Param("itemId") Long itemId);
 }

@@ -4,9 +4,11 @@ import java.time.LocalDateTime;
 
 import com.example.biblioSmart.model.enums.EstadoReserva;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -18,31 +20,48 @@ import jakarta.validation.constraints.NotNull;
 @Entity
 @Table(name = "reservas")
 public class Reserva {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull(message = "El usuario es obligatorio")
-    @ManyToOne
-    @JoinColumn(name = "usuario_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
     @NotNull(message = "El item es obligatorio")
-    @ManyToOne
-    @JoinColumn(name = "item_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id", nullable = false)
     private ItemBiblioteca item;
 
     @NotNull(message = "La fecha de reserva es obligatoria")
-    private LocalDateTime fechaReserva;
+    @Column(name = "fecha_reserva", nullable = false)
+    private LocalDateTime fechaReserva = LocalDateTime.now();
 
     @NotNull(message = "La fecha de expiración es obligatoria")
+    @Column(name = "fecha_expiracion", nullable = false)
     private LocalDateTime fechaExpiracion;
 
+    @NotNull(message = "El estado es obligatorio")
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private EstadoReserva estado = EstadoReserva.PENDIENTE;
-
+    
+    @Column(name = "posicion_cola")
+    private Integer posicionCola;
+    
+    @Column(name = "notificado")
+    private Boolean notificado = false;
+    
     // Constructores
     public Reserva() {}
+
+    public Reserva(Usuario usuario, ItemBiblioteca item, LocalDateTime fechaExpiracion) {
+        this.usuario = usuario;
+        this.item = item;
+        this.fechaExpiracion = fechaExpiracion;
+    }
 
     public Reserva(Usuario usuario, ItemBiblioteca item, LocalDateTime fechaReserva,
                    LocalDateTime fechaExpiracion, EstadoReserva estado) {
@@ -100,5 +119,21 @@ public class Reserva {
 
     public void setEstado(EstadoReserva estado) {
         this.estado = estado;
+    }
+
+    public Integer getPosicionCola() {
+        return posicionCola;
+    }
+
+    public void setPosicionCola(Integer posicionCola) {
+        this.posicionCola = posicionCola;
+    }
+
+    public Boolean getNotificado() {
+        return notificado;
+    }
+
+    public void setNotificado(Boolean notificado) {
+        this.notificado = notificado;
     }
 }
