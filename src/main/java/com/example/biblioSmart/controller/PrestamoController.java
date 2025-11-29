@@ -21,8 +21,31 @@ public class PrestamoController {
     
     private final PrestamoService prestamoService;
     
+    // CONSTANTE para eliminar duplicación
+    private static final String ERROR_JSON_FORMAT = "{\"error\": \"%s\"}";
+    private static final String PUEDE_RENOVAR_JSON_FORMAT = "{\"puedeRenovar\": %s}";
+    private static final String MULTA_PENDIENTE_JSON_FORMAT = "{\"multaPendiente\": %s}";
+    
     public PrestamoController(PrestamoService prestamoService) {
         this.prestamoService = prestamoService;
+    }
+    
+    // MÉTODO HELPER reutilizable para errores
+    private ResponseEntity<String> buildErrorResponse(String errorMessage) {
+        return ResponseEntity.badRequest()
+                .body(String.format(ERROR_JSON_FORMAT, errorMessage));
+    }
+    
+    // MÉTODO HELPER para respuestas booleanas
+    private ResponseEntity<String> buildBooleanResponse(boolean value) {
+        return ResponseEntity.ok()
+                .body(String.format(PUEDE_RENOVAR_JSON_FORMAT, value));
+    }
+    
+    // MÉTODO HELPER para respuestas numéricas
+    private ResponseEntity<String> buildNumericResponse(Number value) {
+        return ResponseEntity.ok()
+                .body(String.format(MULTA_PENDIENTE_JSON_FORMAT, value));
     }
     
     @PostMapping("/usuarios/{usuarioId}/items/{itemId}")
@@ -31,7 +54,7 @@ public class PrestamoController {
             PrestamoDTO prestamo = prestamoService.realizarPrestamo(usuarioId, itemId);
             return ResponseEntity.ok(prestamo);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("{\"error\": \"" + e.getMessage() + "\"}");
+            return buildErrorResponse(e.getMessage());
         }
     }
     
@@ -41,7 +64,7 @@ public class PrestamoController {
             PrestamoDTO prestamo = prestamoService.renovarPrestamo(prestamoId);
             return ResponseEntity.ok(prestamo);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("{\"error\": \"" + e.getMessage() + "\"}");
+            return buildErrorResponse(e.getMessage());
         }
     }
     
@@ -51,7 +74,7 @@ public class PrestamoController {
             PrestamoDTO prestamo = prestamoService.registrarDevolucion(prestamoId);
             return ResponseEntity.ok(prestamo);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("{\"error\": \"" + e.getMessage() + "\"}");
+            return buildErrorResponse(e.getMessage());
         }
     }
     
@@ -77,9 +100,9 @@ public class PrestamoController {
     public ResponseEntity<?> puedeRenovarPrestamo(@PathVariable Long prestamoId) {
         try {
             boolean puedeRenovar = prestamoService.puedeRenovarPrestamo(prestamoId);
-            return ResponseEntity.ok().body("{\"puedeRenovar\": " + puedeRenovar + "}");
+            return buildBooleanResponse(puedeRenovar);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("{\"error\": \"" + e.getMessage() + "\"}");
+            return buildErrorResponse(e.getMessage());
         }
     }
     
@@ -87,9 +110,9 @@ public class PrestamoController {
     public ResponseEntity<?> getMultaPendiente(@PathVariable Long prestamoId) {
         try {
             Double multa = prestamoService.calcularMultaPendiente(prestamoId);
-            return ResponseEntity.ok().body("{\"multaPendiente\": " + multa + "}");
+            return buildNumericResponse(multa);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body("{\"error\": \"" + e.getMessage() + "\"}");
+            return buildErrorResponse(e.getMessage());
         }
     }
 }

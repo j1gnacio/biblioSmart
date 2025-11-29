@@ -1,10 +1,10 @@
 package com.example.biblioSmart.model.dto;
 
-import com.example.biblioSmart.model.enums.EstadoItem;
-import com.example.biblioSmart.model.enums.TipoItem;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import com.example.biblioSmart.model.enums.EstadoItem;
+import com.example.biblioSmart.model.enums.TipoItem;
 
 public class ItemDTO {
     
@@ -21,10 +21,32 @@ public class ItemDTO {
     private LocalDateTime fechaAdquisicion;
     private String descripcion;
 
-    // Constructores, Getters y Setters
-    public ItemDTO() {}
-    
-    // Getters y Setters (generar todos)
+    // Constructores
+    public ItemDTO() {} // Necesario para Spring/Jackson
+
+    public ItemDTO(Long id, String titulo, String autor, TipoItem tipo, EstadoItem estado, 
+                  Integer copiasTotales, Integer copiasDisponibles) {
+        this.id = id;
+        this.titulo = titulo;
+        this.autor = autor;
+        this.tipo = tipo;
+        this.estado = estado;
+        this.copiasTotales = copiasTotales;
+        this.copiasDisponibles = copiasDisponibles;
+    }
+
+    public ItemDTO(String titulo, String autor, TipoItem tipo, Integer copiasTotales) {
+        this.titulo = titulo;
+        this.autor = autor;
+        this.tipo = tipo;
+        this.copiasTotales = copiasTotales;
+        this.copiasDisponibles = copiasTotales;
+        this.estado = EstadoItem.DISPONIBLE;
+        this.tarifaMultaDiaria = new BigDecimal("2.00");
+        this.fechaAdquisicion = LocalDateTime.now();
+    }
+
+    // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     
@@ -60,4 +82,18 @@ public class ItemDTO {
     
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+
+    // Método toString para debugging
+    @Override
+    public String toString() {
+        return "ItemDTO{" +
+                "id=" + id +
+                ", titulo='" + titulo + '\'' +
+                ", autor='" + autor + '\'' +
+                ", tipo=" + tipo +
+                ", estado=" + estado +
+                ", copiasTotales=" + copiasTotales +
+                ", copiasDisponibles=" + copiasDisponibles +
+                '}';
+    }
 }
